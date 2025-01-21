@@ -47,7 +47,6 @@ local function loadScript()
 
         queue_on_teleport([[
             repeat task.wait() until game:IsLoaded()
-            repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("ReplicatedData")
             loadstring(game:HttpGet('https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/item.lua', true))()
         ]])
     end)
