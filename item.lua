@@ -1,12 +1,6 @@
 getgenv().Webhook = "https://discord.com/api/webhooks/1257156534983720972/y7VLKuFnU1o9HJ0N8PZEgjIfAb5zVO1Z4Yk-yp_peYbO0P9O0gpkoNbfbrHeqFo4sU4x"
 
-repeat task.wait() until 
-    game:IsLoaded() and
-    game.Workspace:FindFirstChild("Objects") and
-    game.Workspace.Objects:FindFirstChild("Characters") and
-    game.Workspace.Objects.Characters:FindFirstChild(game.Players.LocalPlayer.Name) and
-    game.Players.LocalPlayer:FindFirstChild("ReplicatedData") and
-    game:GetService("ReplicatedStorage")
+repeat task.wait() until game:IsLoaded() and game:GetService("Workspace"):FindFIrstChild("Objects")
 
 if game:GetService("CoreGui"):FindFirstChild("ScreenGui") then
     game:GetService("CoreGui").ScreenGui:Destroy()
