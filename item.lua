@@ -41,7 +41,7 @@ local function loadScript()
 
         queue_on_teleport([[
             repeat task.wait() until game:IsLoaded()
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/refs/heads/main/item.lua', true))()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/refs/heads/main/item.lua?v=1', true))()
         ]])
     end)
 end
