@@ -41,7 +41,7 @@ local function loadScript()
 
         queue_on_teleport([[
             repeat task.wait() until game:IsLoaded()
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/refs/heads/main/item.lua?v=1', true))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/refs/heads/main/item.lua", true))()
         ]])
     end)
 end
@@ -142,59 +142,73 @@ local function getCharacter()
     return getPlayer().Character
 end
 
--- New function to find valid part for teleporting
+local function isDesiredItem(itemName)
+    -- List of desired items
+    local desiredItems = {
+        "Vengeance",
+        "Demon Finger",
+        "Domain Shard",
+        "Inverted Spear Of Heaven",
+        "Maximum Scroll",
+        "Ravenous Axe",
+        "Impossible Dream", 
+        "Blood Sword"
+    }
+    -- Check if the item is in the desired list
+    for _, name in pairs(desiredItems) do
+        if itemName == name then
+            return true
+        end
+    end
+    return false
+end
+
+-- Function to find a valid teleport part in the item model
 local function findValidPart(item)
-    -- Try to find Root first (normal Part)
-    local root = item:FindFirstChild("Root")
-    if root and root:IsA("Part") then
-        return root
+    -- Search for parts in priority order
+    local priorityParts = { "Root", "Handle" }
+    for _, partName in ipairs(priorityParts) do
+        local part = item:FindFirstChild(partName)
+        if part and (part:IsA("Part") or part:IsA("BasePart") or part:IsA("MeshPart")) then
+            return part
+        end
     end
-    
-    -- Try to find Handle (MeshPart)
-    local handle = item:FindFirstChild("Handle")
-    if handle and handle:IsA("MeshPart") then
-        return handle
-    end
-    
-    -- Look for any MeshPart if specific parts aren't found
+
+    -- Look for any BasePart if priority parts aren't found
     for _, child in pairs(item:GetChildren()) do
-        if child:IsA("MeshPart") then
+        if child:IsA("BasePart") or child:IsA("MeshPart") then
             return child
         end
     end
-    
+
     return nil
 end
 
-local function countNonTalismanItems()
+local function countValidItems()
     local count = 0
     for _, item in ipairs(items) do
-        if item.Name ~= "Talisman" and item.Name ~= "Chest" then
+        if item.Name ~= "Talisman" and item.Name ~= "Chest" and isDesiredItem(item.Name) then
             count = count + 1
         end
     end
     return count
 end
 
-print(countNonTalismanItems())
-
--- Modified while loop with enhanced part detection
-while countNonTalismanItems() > 0 do
+-- Modified while loop
+while countValidItems() > 0 do
     task.wait()
     local foundCollect = false
     for _, item in pairs(items) do
         if item:FindFirstChild("Collect") then
             foundCollect = true
-            if item.Name ~= "Talisman" and item.Name ~= "Chest" then
+            if item.Name ~= "Talisman" and item.Name ~= "Chest" and isDesiredItem(item.Name) then
                 local targetPart = findValidPart(item)
-                
                 if targetPart then
                     getCharacter().HumanoidRootPart.CFrame = targetPart.CFrame
-                    
-                    for i, v in pairs(item:GetDescendants()) do
-                        if v:IsA("ProximityPrompt") then
-                            fireproximityprompt(v, 1, true)
-                            SendWebhook("Found "..item.Name)
+                    for _, descendant in pairs(item:GetDescendants()) do
+                        if descendant:IsA("ProximityPrompt") then
+                            fireproximityprompt(descendant, 1, true)
+                            SendWebhook("Collected: " .. item.Name)
                         end
                     end
                     task.wait(0.35)
@@ -206,4 +220,5 @@ while countNonTalismanItems() > 0 do
         task.wait(1)
     end
 end
+
 Teleport()
