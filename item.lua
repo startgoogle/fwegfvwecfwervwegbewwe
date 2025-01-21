@@ -8,9 +8,9 @@ repeat task.wait() until
     game.Players.LocalPlayer:FindFirstChild("ReplicatedData") and
     game:GetService("ReplicatedStorage")
 
-    if game:GetService("CoreGui"):FindFirstChild("ScreenGui") then
-        game:GetService("CoreGui").ScreenGui:Destroy()
-    end
+if game:GetService("CoreGui"):FindFirstChild("ScreenGui") then
+    game:GetService("CoreGui").ScreenGui:Destroy()
+end
 
 task.wait(7)
 local VIS = game:GetService("VirtualInputManager")
@@ -133,7 +133,6 @@ local function SendWebhook(msg)
     repeat task.wait() until data
     local newdata = game:GetService("HttpService"):JSONEncode(data)
 
-
     local headers = {
         ["Content-Type"] = "application/json"
     }
@@ -150,6 +149,30 @@ local function getCharacter()
     return getPlayer().Character
 end
 
+-- New function to find valid part for teleporting
+local function findValidPart(item)
+    -- Try to find Root first (normal Part)
+    local root = item:FindFirstChild("Root")
+    if root and root:IsA("Part") then
+        return root
+    end
+    
+    -- Try to find Handle (MeshPart)
+    local handle = item:FindFirstChild("Handle")
+    if handle and handle:IsA("MeshPart") then
+        return handle
+    end
+    
+    -- Look for any MeshPart if specific parts aren't found
+    for _, child in pairs(item:GetChildren()) do
+        if child:IsA("MeshPart") then
+            return child
+        end
+    end
+    
+    return nil
+end
+
 local function countNonTalismanItems()
     local count = 0
     for _, item in ipairs(items) do
@@ -162,7 +185,7 @@ end
 
 print(countNonTalismanItems())
 
--- Modified while loop to use filtered count
+-- Modified while loop with enhanced part detection
 while countNonTalismanItems() > 0 do
     task.wait()
     local foundCollect = false
@@ -170,17 +193,19 @@ while countNonTalismanItems() > 0 do
         if item:FindFirstChild("Collect") then
             foundCollect = true
             if item.Name ~= "Talisman" and item.Name ~= "Chest" then
-                local root = item.Root
+                local targetPart = findValidPart(item)
                 
-                getCharacter().HumanoidRootPart.CFrame = root.CFrame
-                
-                for i, v in pairs(item:GetDescendants()) do
-                    if v:IsA("ProximityPrompt") then
-                        fireproximityprompt(v, 1, true)
-                        SendWebhook("Found "..item.Name)
+                if targetPart then
+                    getCharacter().HumanoidRootPart.CFrame = targetPart.CFrame
+                    
+                    for i, v in pairs(item:GetDescendants()) do
+                        if v:IsA("ProximityPrompt") then
+                            fireproximityprompt(v, 1, true)
+                            SendWebhook("Found "..item.Name)
+                        end
                     end
+                    task.wait(0.35)
                 end
-                task.wait(0.35)
             end
         end
     end
