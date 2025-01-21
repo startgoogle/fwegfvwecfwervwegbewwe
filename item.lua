@@ -46,8 +46,9 @@ local function loadScript()
         local queue_on_teleport = queue_on_teleport or syn.queue_on_teleport
 
         queue_on_teleport([[
-            repeat wait() until game.Players.LocalPlayer:FindFirstChild("ReplicatedData")
-            loadstring(game:HttpGet('https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/refs/heads/main/item.lua', true))()
+            repeat task.wait() until game:IsLoaded()
+            repeat task.wait() until game.Players.LocalPlayer:FindFirstChild("ReplicatedData")
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/startgoogle/fwegfvwecfwervwegbewwe/item.lua', true))()
         ]])
     end)
 end
