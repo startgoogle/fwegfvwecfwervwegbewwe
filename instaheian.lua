@@ -1,6 +1,7 @@
-repeat task.wait() until workspace.Objects.Mobs["Heian Imaginary Demon"]
+repeat task.wait() until workspace.Objects.Mobs:WaitForChild("Heian Imaginary Demon")
+task.wait(10)
 local path = workspace.Objects.Mobs["Heian Imaginary Demon"]
-local humanoid = workspace.Objects.Mobs["Heian Imaginary Demon"].Humanoid
+local humanoid = workspace.Objects.Mobs["Heian Imaginary Demon"]:WaitForChild("Humanoid")
 
 local health = humanoid.Health
 local player = game:GetService("Players").LocalPlayer
